@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title> {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'css/foundation.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <link rel="stylesheet" href="{% static 'css/foundation-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.toast.css' %}">
+    <link rel="stylesheet" href="{% static 'sce/minified/themes/default.min.css' %}" type="text/css" media="all" />
+    <script src="{% static 'js/vendor/jquery.js' %}"></script>
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <style>
+		pre {
+			 white-space: pre-wrap;       /* css-3 */
+			 white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+			 white-space: -pre-wrap;      /* Opera 4-6 */
+			 white-space: -o-pre-wrap;    /* Opera 7 */
+			 word-wrap: break-word;       /* Internet Explorer 5.5+ */
+			}
+    </style>
+  </head>
+  <body>

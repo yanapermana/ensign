@@ -1,0 +1,62 @@
+	{% include "student/templates/header.html" %}
+	{% include "student/templates/menu.html" %}
+
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">	
+				
+				<div class="callout">
+					<label><strong>Dashboard</strong></label>
+					<small>Change the basic settings of your account and your team.</small>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: '{{message}}',
+										    position: 'top-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+	
+			<div class="row">
+				<div class="columns">
+					<div class="callout">
+						<form action="/student/team/update/process/{{item.id}}" method="post" data-abide>
+							<div class="row">
+								<div class="medium-9 columns">
+									<label>
+										<h4>Update Team Information</h4> <hr/>
+									</label>
+									
+									<label>
+										{% csrf_token %}
+									</label>
+									
+									<label>Description
+										<input type="text" name="description" value="{{item.description}}" placeholder="Description" required autofocus>
+									</label>
+									
+									<label>
+										<input class="button" type="submit" value="Update">
+									</label>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			</div>
+		</div>
+	</div>	
+	{% include "student/templates/footer.html" %}

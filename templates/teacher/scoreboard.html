@@ -1,0 +1,69 @@
+	{% include "teacher/templates/header.html" %}
+	{% include "teacher/templates/menu.html" %}
+	
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">
+				
+				<div class="callout">
+					<label><strong>Scoreboard</strong></label>
+					<small>View the best problem solver.</small>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: {{message}},
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+				
+				<div class="row collapse">
+					<div class="medium-centered columns">
+						<table class="hover">
+							<thead class="text-center">
+								<tr>
+									<td>Rank</td>
+									<td colspan="2">Team</td>
+									<td class="text-center">Points</td>
+								</tr>
+							</thead>
+							<tbody>
+							{% for t in team %}
+							{% if forloop.counter == 1 %}
+							<tr>
+								<td>{{forloop.counter}}</td>
+								<td><i class="fi-crown"></i></td>
+								<td>
+								<label data-tooltip aria-haspopup="true" class="has-tip top" data-disable-hover="false" tabindex="2" title="Members: {{t.student}}">{{t.name}}</label></td>
+								<td class="text-center">{{t.point}}</td>
+							</tr>
+							{% else %}
+							<tr>
+								<td>{{forloop.counter}}</td>
+								<td><i class="fi-torsos-male-female"></i></td>
+								<td><label data-tooltip aria-haspopup="true" class="has-tip top" data-disable-hover="false" tabindex="2" title="Members: {{t.student}}">{{t.name}}</label></td>
+								<td class="text-center">{{t.point}}</td>
+							</tr>
+							{% endif %}
+							
+							</tbody>
+							{% endfor %}
+				
+						</table>
+					</div>
+				</div>		
+			</div>
+		</div>
+	</div>
+	{% include "teacher/templates/footer.html" %}

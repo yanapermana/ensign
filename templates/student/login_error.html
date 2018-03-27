@@ -1,0 +1,13 @@
+	{% extends "student/login.html" %}
+	{% block login %}
+	{{ block.super }}
+				<div class="callout alert" data-closable="fade-out">
+					  <div class="large-11 large-centered">
+						  <label class="text-center"> <i class="fi-x-circle"></i> The username and password you entered did not match our records.</label>
+					  </div>
+					  <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+					    <span aria-hidden="true">&times;</span>
+					  </button>
+				</div>	
+	{% endblock %}
+	

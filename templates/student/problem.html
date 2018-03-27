@@ -1,0 +1,82 @@
+	{% include "student/templates/header.html" %}
+	{% include "student/templates/menu.html" %}
+			
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">	
+				
+				<div class="callout">
+					<label><strong>Problems</strong></label>
+					<small>Solve the problem and pwn it.</small>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: {{message}},
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+				
+				<ul class="tabs" data-tabs id="example-tabs">
+				  <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">All</a></li>
+				  <li class="tabs-title"><a href="#panel2" aria-selected="true">Unsolved</a></li>
+				  <li class="tabs-title"><a href="#panel3">Solved</a></li>
+				</ul>
+				
+				<div class="tabs-content" data-tabs-content="example-tabs">
+				  <div class="tabs-panel is-active" id="panel1">
+				    <div class="row small-up-1 medium-up-2 large-up-3">
+					{% for item in problem %}	
+						<div class="column">
+							<div class="callout text-center">
+								<a href="/student/problem/workspace/{{item.id}}"><img src="/{{item.picture}}" class="thumbnail" alt="" /></a>
+								<a href="/student/problem/workspace/{{item.id}}" class="expanded small button hollow">{{item.title}}</a>
+							</div>
+						</div>			
+					{% endfor %}
+					</div>
+				  </div>
+				  <div class="tabs-panel" id="panel2">
+				    <div class="row small-up-1 medium-up-2 large-up-3">
+					{% for item in query %}	
+					{% if item.status == False %}
+						<div class="column">
+							<div class="callout text-center">
+								<a href="/student/problem/workspace/{{item.problem.id}}"><img src="/{{item.problem.picture}}" class="thumbnail" alt=""></a>
+								<a href="/student/problem/workspace/{{item.problem.id}}" class="expanded small button hollow">{{item.problem.title}}</a>
+							</div>
+						</div>			
+					{% endif %}
+					{% endfor %}
+					</div>
+				  </div>
+				  <div class="tabs-panel" id="panel3">
+				    <div class="row small-up-1 medium-up-2 large-up-3">
+					{% for item in query %}	
+					{% if item.status == True %}
+						<div class="column">
+							<div class="callout text-center">
+								<a href="/student/problem/workspace/{{item.problem.id}}"><img src="/{{item.problem.picture}}" class="thumbnail" alt=""/></a>
+								<a href="/student/problem/workspace/{{item.problem.id}}" class="expanded small button hollow">{{item.problem.title}}</a>
+							</div>
+						</div>			
+					{% endif %}
+					{% endfor %}
+					</div>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>	
+	{% include "student/templates/footer.html" %}

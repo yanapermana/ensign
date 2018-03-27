@@ -1,0 +1,82 @@
+	{% include "student/templates/header.html" %}
+	{% include "student/templates/menu.html" %}
+	
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">
+				
+				<div class="callout">
+					<label><strong>Welcome</strong></label>
+					<small>Read Me.</small>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: {{message}},
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+				
+				<div class="callout">
+					
+					<h4>Apa yang dimaksud dengan Keamanan Jaringan?</h4>
+					
+					<img src="/static/media/welcome/picture/netsec.jpg" class="thumbnail" alt="Network Security" />
+					
+					<p>
+					Keamanan jaringan (Bahasa Inggris: Network Security) dalam jaringan komputer sangat penting dilakukan untuk memonitor akses jaringan dan mencegah penyalahgunaan sumber daya jaringan yang tidak sah. Tugas keamanan jaringan dikontrol oleh administrator jaringan.
+					</p>
+					
+					<h4>Apa itu ENSIGN?</h4>
+					
+					<img src="/static/media/welcome/picture/wireshark-flat-design.jpg" class="thumbnail" alt="Wireshark Flat Design" />
+					
+					<p>
+					ENSIGN adalah Multimedia Interaktif berbasis Game Capture The Flag dengan Model Problem Based Learning Menggunakan Algortima Boyer-Moore untuk meningkatkan Pemahaman Siswa SMK dalam Materi Kemanan Jaringan
+					</p>
+					
+					<h4>Bagaimana aturan permainannya?</h4>
+					
+					<p>
+					Pada permainan ini, anda akan berperan sebagai investigator forensik digital khususnya dalam bidang keamanan jaringan. Beberapa masalah yang telah dibangun dirujuk dari berbagai kasus dunia nyata yang sering dihadapi investigator forensik digital. Pada multimedia ini, tingkatan kesulitannya telah disesuaikan untuk siswa SMK agar lebih mudah dipahami tahap demi setahap.
+					</p>
+					
+					<p>
+					Setiap masalah memiliki poin, jika anda berhasil menyelesaikannya anda akan mendapatkan poin dan diakumulasikan ke poin Tim.
+					</p>
+					
+					<p>
+					Setiap masalah memiliki evaluasi yang berisi berbagai soal yang berkaitan dengan masalah. Jika anda berhasil menjawabnya dengan benar maka anda akan mendapatkan 10 poin untuk setiap pertanyaan. Kemudian poin tersebut diakumulasikan ke poin Tim.
+					</p>
+					
+					<h4>Bagaimana cara menggunakan ENSIGN?</h4>
+					
+					<p>Setelah anda mendaftar dalam multimedia ini, silahkan ikuti instruksi selanjutnya:</p>
+					<p>1. Silahkan mendaftar terlebih dahulu sebagai Tim.</p>
+					<p>2. Setelah terdaftar, anda bisa membuka menu <i>Problem, Statistic</i> dan lain-lain.</p>
+					<p>3. Menu <i>Problem</i> berisi masalah yang harus anda selesaikan, didalamnya terdapat <i>Support</i> yang dapat membantu anda menyelesaikan masalah, kemudian ada <i>Evaluation</i> yang berguna memverifikasi apakah anda sudah memahami dan menguasai materi tersebut. Adapun poin yang dapat diraih setelah menyelesaikan masalah dan diakumulasikan ke dalam <i>Scoreboard</i>.</p>
+					<p>4. Silahkan pilih masalah terlebih dahulu, anda akan diarahkan langsung menuju <i>tab</i> rincian masalah dan unduh berkas yang telah disisipkan didalamnya.</p>
+					<p>5. Silahkan mengisi <i>Workspace</i> yang berisi lembar kerja untuk merangkum pengetahuan anda.</p>
+					<p>6. Dalam kasus dunia nyata, barang bukti rekam jejak jaringan selalu memiliki informasi yang sensitif seperti <i>password</i>, kode rahasia <i>internet banking</i> dan lain-lain. Pada multimedia ini, informasi sensitif tersebut direpresentasikan dengan <i>FLAG</i>, silahkan kirim pada <i>tab answer</i>. Contoh: <pre> 	
+FLAG{ini_contoh_flag_silahkan_submit_di_tab_answer}</pre></p>
+					
+					<h4>Contact</h4>
+					<p>Yana Permana <br/>0x7079@gmail.com</p>
+				
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	{% include "student/templates/footer.html" %}

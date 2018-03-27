@@ -1,0 +1,128 @@
+	{% include "teacher/templates/header.html" %}
+	{% include "teacher/templates/menu.html" %}
+
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">	
+				
+				<div class="callout">
+					<label><strong>Evaluation</strong></label>
+					<small>Create questions for your student evaluation.</small>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: '{{message}}',
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+
+				<div class="callout large">
+					<form action="/teacher/problem/evaluation/update/process/{{item.id}}" method="post" enctype="multipart/form-data" data-abide>
+						<div class="row">
+					
+							<div class="medium-9 medium-centered columns">
+								<label>
+									<h5 class="text-center">Update Evaluation</h5> <hr/>
+								</label>
+								
+								<label>
+									{% csrf_token %}
+								</label>
+								
+								<label>
+									<input class="is-hidden" type="text" name="problem_id" value="{{problem_id}}" hidden="hidden" required autofocus/>
+								</label>
+								
+								<label>Question
+									<textarea type="text" name="question" required autofocus/>{{item.question}}</textarea><br/>
+								</label>
+								
+								{% if item.picture != "static/media/problem/evaluation/picture/default.jpg" %}
+								<label for="picture" class="button secondary"><i class="fi-photo"></i> Upload Picture (Optional)</label>
+								<input type="file" name="picture" id="picture" class="show-for-sr" /> <br/>
+								<label class="label secondary">Current: {{item.picture}}</label> <br/> <br/>
+								{% else %}
+								<label for="picture" class="button secondary"><i class="fi-photo"></i> Upload Picture (Optional)</label>
+								<input type="file" name="picture" id="picture" class="show-for-sr" /> <br/>
+								<label class="label secondary">Current: Empty</label> <br/> <br/>
+								{% endif %}
+								
+								<label>A answer
+									<textarea type="text" name="A" required autofocus/>{{item.A}}</textarea><br/>
+								</label>
+								
+								<label>B answer
+									<textarea type="text" name="B" required autofocus/>{{item.B}}</textarea><br/>
+								</label>
+								
+								<label>C answer
+									<textarea type="text" name="C" required autofocus/>{{item.C}}</textarea><br/>
+								</label>
+								
+								<label>D answer
+									<textarea type="text" name="D" required autofocus/>{{item.D}}</textarea><br/>
+								</label>
+								
+								<label>E answer
+									<textarea type="text" name="E" required autofocus/>{{item.E}}</textarea><br/>
+								</label>
+								
+								<label>Correct answer
+									<select name="answer">
+										<option hidden=hidden name="answer" value="{{item.answer}}">{{item.answer}}</option>
+										<option name="answer" value="A">A</option>
+										<option name="answer" value="B">B</option>
+										<option name="answer" value="C">C</option>
+										<option name="answer" value="D">D</option>
+										<option name="answer" value="E">E</option>
+									</select>
+								</label>
+								
+								<label>Point
+									<input type="number" name="point" value="{{item.point}}" required autofocus/>
+								</label>
+								
+								<label>Difficult level
+									<select name="difficult_level">
+										<option hidden=hidden name="difficult_level" value="{{item.difficult_level}}">{{item.difficult_level}}</option>
+										<option name="difficult_level" value="C1">C1</option>
+										<option name="difficult_level" value="C2">C2</option>
+										<option name="difficult_level" value="C3">C3</option>
+										<option name="difficult_level" value="C4">C4</option>
+										<option name="difficult_level" value="C5">C5</option>
+										<option name="difficult_level" value="C6">C6</option>
+									</select>
+								</label>
+								
+								<label>Difficult forecast
+									<select name="difficult_forecast">
+										<option hidden=hidden name="difficult_forecast" value="{{item.difficult_forecast}}">{{item.difficult_forecast}}</option>
+										<option name="difficult_forecast" value="Easy">Easy</option>
+										<option name="difficult_forecast" value="Medium">Medium</option>
+										<option name="difficult_forecast" value="Hard">Hard</option>
+									</select>	
+								</label>
+
+								<label>
+									<input class="button expanded" type="submit" value="Update">
+								</label>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>	
+	{% include "teacher/templates/footer.html" %}

@@ -1,0 +1,294 @@
+	{% include "student/templates/header.html" %}
+	{% include "student/templates/menu.html" %}
+		
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">
+				
+				<div class="callout">
+					<label><strong>Dashboard</strong></label>
+					<small>Change the basic settings of your account and your team.</small>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: {{message}},
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+				
+				<div class="row collapse">
+				  <div class="medium-3 columns">
+				    <ul class="tabs vertical" id="example-vert-tabs" data-tabs>
+				      <li class="tabs-title is-active"><a href="#panel1v" aria-selected="true">Account Information</a></li>
+				      <li class="tabs-title"><a href="#panel2v">Create New Team</a></li>
+				      <li class="tabs-title"><a href="#panel3v">Join Existing Team</a></li>
+				      <li class="tabs-title"><a href="#panel4v">Team Information</a></li>
+				      <li class="tabs-title"><a href="#panel5v">Team Members</a></li>
+				      <li class="tabs-title"><a href="#panel6v">Team Membership Request</a></li>
+				      <li class="tabs-title"><a href="#panel7v">Team Membership Verify</a></li>
+				    </ul>
+				    </div>
+				    <div class="medium-9 columns">
+				    <div class="tabs-content vertical" data-tabs-content="example-vert-tabs">
+				      <div class="tabs-panel is-active" id="panel1v">
+				        <form action="/student/dashboard/update/{{query.id}}" method="post" data-abide>
+							<div class="row">
+			
+								<div class="medium-7 columns">
+									<label>
+										<h5>Account Information</h5> <hr/>
+									</label>
+									
+									<label>
+										{% csrf_token %}
+									</label>
+									
+									<label>Full name
+										<input type="text" name="fullname" placeholder="Full name" value="{{query.fullname}}" required autofocus>
+									</label>
+									
+									<label>Student identity card number
+										<input type="text" name="sicnumber" placeholder="Student identity card number" value="{{query.sicnumber}}" required autofocus>
+									</label>
+									
+									
+									<label>
+										<input class="button" type="submit" value="Update">
+									</label>
+								</div>
+							</div>
+						</form>
+				      </div>
+				      <div class="tabs-panel" id="panel2v">
+						{% if team_confirmed.count == 1 %}
+							<ul class="menu vertical">
+								<li><span class="success label"><i class="fi-check"></i> Congratulations!</span></li>
+								<li><span class="success label"><i class="fi-check"></i> You already have a team.</span></li>
+								<li><span class="success label"><i class="fi-check"></i> You don't need to create team.</span></li>
+								<li><span class="success label"><i class="fi-check"></i> You don't need to join team.</span></li>
+							</ul>
+						{% else %}
+							<h5>Create New Team</h5> <hr/>
+							<p>Do you have a team?</p>
+							<a class="button small" href="/student/team"> Create New Team</a>
+						{% endif %}
+				      </div>
+				      <div class="tabs-panel" id="panel3v">
+					{% if member_pending.count == 0 %}
+						{% if team_confirmed.count == 1 %}
+							<ul class="menu vertical">
+								<li><span class="success label"><i class="fi-check"></i> Congratulations!</span></li>
+								<li><span class="success label"><i class="fi-check"></i> You already have a team.</span></li>
+								<li><span class="success label"><i class="fi-check"></i> You don't need to join team.</span></li>
+							</ul>
+						{% elif team_confirmed.count == 0 %}
+						<form action="/student/team/join" method="post" data-abide>
+							<div class="row">
+			
+								<div class="medium-5 columns">
+									<label>
+										<h5>Join Existing Team</h5> <hr/>
+									</label>
+									
+									<label>
+										{% csrf_token %}
+									</label>
+									
+									<label>Invitation Code
+										<input type="text" name="invitation_code" placeholder="Invitation code" required autofocus>
+									</label>
+									
+									<label>
+										<input class="button" type="submit" value="Join">
+									</label>
+								</div>
+							</div>
+						</form>
+						{% endif %}
+					{% elif member_pending.count == 1 %}
+						{% if team_confirmed.count == 0 %}
+						<span class="info label"><i class="fi-info"></i> Wait, until your teammates confirm your request.</span>
+						{% else %}
+						<span class="success label"><i class="fi-check"></i> Congratulations! You already have a team. You do not need to join team again.</span>
+						{% endif %}
+					{% else %}
+						<form action="/student/team/join" method="post" data-abide>
+							<div class="row">
+			
+								<div class="medium-5 columns">
+									<label>
+										<h5>Join Existing Team</h5> <hr/>
+									</label>
+									
+									<label>
+										{% csrf_token %}
+									</label>
+									
+									<label>Invitation Code
+										<input type="text" name="invitation_code" placeholder="Invitation code" required autofocus>
+									</label>
+									
+									<label>
+										<input class="button" type="submit" value="Join">
+									</label>
+								</div>
+							</div>
+						</form>
+					{% endif %}
+				      </div>
+				      <div class="tabs-panel" id="panel4v">
+						{% if team_confirmed.count != 1 %}
+						<span class="alert label"><i class="fi-x"></i> You don't have a team. To view team information, create team or join team.</span>
+						{% else %}
+						{% for item in team_confirmed %}	
+						<h5>Team Information</h5> <hr/>
+						<table class=hover>
+							<tbody>
+								<tr>
+									<td>Team name</td>
+									<td colspan=2>
+										<label>{{item.name}}</label>
+									</td>
+								</tr>
+								<tr>
+									<td>Invitation code</td>
+									<td>
+										<label id="invcode">{{item.invitation_code}}</label>
+										<label class="small label secondary btncpy" data-clipboard-action="copy" data-clipboard-target="#invcode">Copy</label>
+									</td>
+								</tr>
+								<tr>
+									<td>Action</td>
+									<td colspan=2>
+										<a href="/student/team/update/{{item.id}}" class="warning label"><i class="fi-pencil"></i> Update</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<span class="info label"><i class="fi-info"></i> Give invitation code to your teammates.</span>
+						{% endfor %}	
+						{% endif %}
+				      </div>
+				      <div class="tabs-panel" id="panel5v">
+						{% if team_confirmed.count != 1 %}
+						<span class="alert label"><i class="fi-x"></i> You don't have a team. To view team members, create team or join team.</span>
+						{% else %}
+				        <h5>Team Members</h5> <hr/>
+						<table class="hover">
+							<thead>
+							<tr>
+								<td>No</td>
+								<td>Username</td>
+								<td>Full name</td>
+								<td>SID</td>
+							</tr>
+							</thead>
+						{% for m in member %}	
+							<tbody>
+								<tr>
+									<td><label>{{forloop.counter}}</label></td>
+									<td><label>{{m.username}}</label></td>
+									<td><label>{{m.fullname}}</label></td>
+									<td><label>{{m.sicnumber}}</label></td>
+								</tr>
+							</tbody>
+						{% endfor %}	
+						</table>
+						{% endif %}
+				      </div>
+				      <div class="tabs-panel" id="panel6v">
+					{% if team_confirmed.count == 1 %}
+						<span class="info label"><i class="fi-info"></i> There's no pending request.</span>
+					{% elif team_confirmed.count == 0 %}
+						{% if member_pending.count == 1%}
+						<h5>Team Membership Requests</h5> <hr/>
+						<table class=hover>
+							<thead>
+								<tr>
+									<td>Team</td>
+									<td>Submit date</td>
+									<td>Status</td>
+									<td>Action</td>
+								</tr>
+							</thead>
+						{% for item in team %}	
+							<tbody>
+								<tr>
+									<td><label>{{item.name}}</label></td>
+									<td><label>{{item.date_created}}</label></td>
+									<td><span class="warning label">{{item.status}}<span></td>
+									<td><a href="/student/team/cancel/{{item.id}}" class="alert label"><i class="fi-pencil"></i> Cancel</a></td>
+								</tr>
+							</tbody>
+						{% endfor %}	
+						</table>
+						{% elif member_pending.count == 0%}
+						<span class="alert label"><i class="fi-x"></i> Nothing needs to be canceled. You have to create team or join team.</span>
+						{% endif %}
+					{% endif %}
+				      </div>
+				      
+				      <div class="tabs-panel" id="panel7v">
+					{% if team_confirmed.count == 1 %}
+						{% if member_pending.count > 0 %}
+						  <h5>Team Membership Verify</h5> <hr/>
+							<table class="hover">
+								<thead>
+									<tr>
+										<td>No</td>
+										<td>Username</td>
+										<td>Fullname</td>
+										<td>Action</td>
+									</tr>
+								</thead>
+							{% for mp in member_pending %}	
+								<tbody>
+									<tr>
+										<td><label>{{forloop.counter}}</label></td>
+										<td><label>{{mp.username}}</label></td>
+										<td><label>{{mp.fullname}}</label></td>
+										<td><a href="/student/team/confirm/{{mp.id}}" class="success label"><i class="fi-check"></i> Confirm</a></td>
+									</tr>
+								</tbody>
+							{% endfor %}	
+							</table>
+						{% else %}
+						<span class="info label"><i class="fi-info"></i> There's no team membership request.</span>
+						{% endif %}
+					{% else %}
+						<span class="alert label"><i class="fi-x"></i> Nothing needs to be verified. You have to create team or join team.</span>
+					{% endif %}
+					  </div>
+				      
+				    </div>
+				  </div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	<script>
+	    var clipboard = new Clipboard('.btncpy');
+	
+	    clipboard.on('success', function(e) {
+	        console.log(e);
+	    });
+	
+	    clipboard.on('error', function(e) {
+	        console.log(e);
+	    });
+    </script>
+	{% include "student/templates/footer.html" %}

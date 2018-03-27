@@ -1,0 +1,126 @@
+	{% include "teacher/templates/header.html" %}
+	{% include "teacher/templates/menu.html" %}
+
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">	
+				
+				<div class="callout">
+					<label><strong>Problems</strong></label>
+					<small>Create problem based learning for your student.</small>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: '{{message}}',
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+
+				<div class="callout large">
+					<form action="/teacher/problem/update/process/{{item.id}}" method="post" enctype="multipart/form-data" data-abide>
+						<div class="row">
+					
+							<div class="medium-9 medium-centered columns">
+								<label>
+										<h5 class="text-center">Update Problem</h5> <hr/>
+									</label>
+									
+								<label>
+									{% csrf_token %}
+								</label>
+								
+								<label>Title
+									<input type="text" name="title" value="{{item.title}}" placeholder="Title" required autofocus>
+								</label>
+								
+								<label>Description
+									<input type="text" name="description" value="{{item.description}}" placeholder="Description" required autofocus>
+								</label>
+
+								<label>Limited Questions
+										<!-- <textarea type="text" name="limited_questions" placeholder="Limited Questions" required autofocus />{{item.limited_questions}}</textarea> -->
+										<textarea type="text" name="limited_questions" placeholder="Limited Questions" required autofocus />{% for limited_questions_item in item.limited_questions_split_by_newline %}{{ limited_questions_item }}&#13;{% endfor %}</textarea>
+								</label>
+
+								<label>Keyword
+									<input id="keyword" type="text" name="keyword" value="{{item.keyword}}" placeholder="Keyword" onchange="keyword_check()" required autofocus>
+								</label>
+								
+								<label>Flag
+									<input type="text" name="flag" value="{{item.flag}}" placeholder="Flag" required autofocus>
+								</label>
+								
+								<label>Point
+									<input type="number" name="point" value="{{item.point}}" placeholder="Point" required autofocus>
+								</label>
+								
+								
+								<label for="attachment" class="button secondary"><i class="fi-page-filled"></i> Upload Attachment</label>
+								<input type="file" name="attachment" id="attachment" class="show-for-sr" /> <br/>
+								<label class="label secondary">Current: {{item.attachment}}</label> <br/> <br/> 
+								
+								<label for="picture" class="button secondary"><i class="fi-photo"></i> Upload Picture</label>
+								<input type="file" name="picture" id="picture" class="show-for-sr" /> <br/>
+								<label class="label secondary">Current: {{item.picture}}</label> <br/> <br/>
+								
+								<label>
+									<input id="submit" class="button expanded" type="submit" value="Update">
+								</label>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>	
+
+	<div id="demo">
+		
+	</div>
+
+	<script type="text/javascript">
+	function keyword_check()
+	{
+		var keywords = document.getElementById("keyword").value;
+		var submit = document.getElementById("submit");
+		submit.disabled = true;
+		keywords = keywords.split(",");
+		if (keywords.length < 5){
+			$.toast({
+				heading: 'Warning',
+				icon: 'warning',
+				showHideTransition: 'slide',
+				text: ['Your keyword less than 5.'],
+				position: 'bottom-right',
+				stack: false,
+				loaderBg: '#4fc1e6',
+				hideAfter: 3000
+			})
+		} else{
+			submit.disabled = false;
+			$.toast({
+				heading: 'Good',
+				icon: 'success',
+				showHideTransition: 'slide',
+				text: ['Button enabled.'],
+				position: 'bottom-right',
+				stack: false,
+				loaderBg: '#4fc1e6',
+				hideAfter: 3000
+			})
+		}
+	}
+	</script>
+	{% include "teacher/templates/footer.html" %}

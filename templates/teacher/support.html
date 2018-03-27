@@ -1,0 +1,118 @@
+	{% include "teacher/templates/header.html" %}
+	{% include "teacher/templates/menu.html" %}
+
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">	
+				
+				<div class="callout">
+					<label><strong>Support</strong></label>
+					<small>Create support for your student insight.</small>
+				</div>
+				
+											
+				
+				<div class="button-group">
+				  <a class="button" id="show-support" data-toggle="{% for item in query %}supportv{{item.id}} {% endfor %}">Support</a>
+				  <a class="button" data-open="modal-create-support">Create Support</a>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: {{message}},
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+
+				<div class="full reveal" id="modal-create-support" data-reveal data-animation-in="slide-in-up" data-animation-out="hinge-out-from-bottom">
+					<form action="/teacher/problem/support/create" method="post" data-abide>
+						<div class="row">
+					
+							<div class="medium-9 medium-centered columns">
+								<label>
+									<h5><i class="fi-lightbulb"></i> Create Support</h5> <hr/>
+								</label>
+								
+								<label>
+									{% csrf_token %}
+								</label>
+								
+								<label>
+									<input class="is-hidden" type="text" name="problem_id" value="{{problem_id}}" hidden="hidden" required autofocus/>
+								</label>
+								
+								<label>
+									<input type="text" name="title" placeholder="Title" required autofocus />
+								</label>
+								
+								<label>
+									<textarea id="blogeditor" name="post" style="height:300px;width:850px;" required autofocus ></textarea>
+								</label>
+
+								<label><br/>
+									<input class="button" type="submit" value="Create">
+								</label>
+							</div>
+						</div>
+					</form>
+				  <button class="close-button" data-close aria-label="Close modal" type="button"><span aria-hidden="true">&times;</span></button>
+				</div>
+
+				<div class="row">
+				{% for item in query %}	
+					<div id="supportv{{item.id}}" data-toggler data-animate="hinge-in-from-top hinge-out-from-top" class="column">
+						<div class="callout">
+							<a data-toggle="animatedModal{{item.id}}"><i class="fi-lightbulb"></i> {{item.title}}</a>					
+							<div class="large reveal" id="animatedModal{{item.id}}" data-reveal data-close-on-click="true" data-animation-in="scale-in-down" data-animation-out="scale-out-up">
+							  <h5><i class="fi-lightbulb"></i> Support Details</h5>
+							  <hr/>
+							  
+							  <h3>{{item.title}}</h3>
+							  <hr/>
+							  
+							  <ul class="tabs" data-tabs id="example-tabs">
+								  <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">Rendered</a></li>
+								  <li class="tabs-title"><a href="#panel2">Code</a></li>
+								</ul>
+								
+								<div class="tabs-content" data-tabs-content="example-tabs">
+								  <div class="tabs-panel is-active" id="panel1">
+								    {% autoescape off %}{{ item.post }}{% endautoescape %}
+								  </div>
+								  <div class="tabs-panel" id="panel2">
+								    <pre style="height: 512px; overflow-y: scroll;">{{ item.post }}</pre>
+								  </div>
+								</div>
+											
+							  <div id="movpost">
+								  
+							  </div>
+							  <div class="button-group">
+								<a class="success button" href="/teacher/problem/support/update/{{problem_id}}/{{item.id}}"><i class="fi-page-edit"></i> Update</a>
+								<a class="alert button" href="/teacher/problem/support/delete/process/{{problem_id}}/{{item.id}}"><i class="fi-trash"></i> Delete</a>
+							  </div>
+							  <button class="close-button" data-close aria-label="Close reveal" type="button">
+							    <span aria-hidden="true">&times;</span>
+							  </button>
+							</div>
+
+						</div>
+					</div>			
+				{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>	
+	
+	{% include "teacher/templates/footer.html" %}

@@ -1,0 +1,313 @@
+	{% include "teacher/templates/header.html" %}
+	{% include "teacher/templates/menu.html" %}
+
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">	
+				
+				<div class="callout" style="margin-bottom:32px">
+					<label><strong>Write Up</strong></label>
+					<small>View and check writeup for your student points.</small>
+				</div>
+
+				<form action="/teacher/writeup/search" method="post" data-abide>
+				{% csrf_token %}
+				<div class="input-group">
+					  <span class="input-group-label"><i class="fi-page-search"></i></span>
+					  <input type="text" name="keyword" class="input-group-field" placeholder="e.g. {Team}:{Problem}" autofocus required/>
+					  <div class="input-group-button">
+					    <input type="submit" class="button" value="Go">
+					  </div>
+				</div>
+				</form>
+				
+				<div class="button-group" style="margin-bottom:32px" hidden="hidden">
+				  <a class="button" id="show-writeup" data-toggle="{% for w in writeup %}writeupv{{w.id}} {% endfor %}">
+					  Write Up
+				  </a>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: {{message}},
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+				
+				<ul class="tabs" data-tabs id="example-tabs">
+				  <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">Not yet rated</a></li>
+				  <li class="tabs-title"><a href="#panel2" aria-selected="true">Has been rated</a></li>
+				</ul>
+				
+				<div class="tabs-content" data-tabs-content="example-tabs">
+				  <div class="tabs-panel is-active" id="panel1">
+				    <div class="row">
+						<ul class="menu vertical">
+						{% for w in writeup %}	
+						{% if w.teacher_point == 0 %}
+							<div id="writeupv{{w.id}}" data-toggler data-animate="hinge-in-from-top hinge-out-from-top" class="column">
+								<div class="callout">
+									<li><a data-toggle="animatedModal{{w.id}}"><i class="fi-lightbulb"></i> {{ w.team.name }} -- {{ w.problem.title }}</a></li>
+												
+									<div class="large reveal" id="animatedModal{{w.id}}" data-reveal data-close-on-click="true" data-animation-in="scale-in-down" data-animation-out="scale-out-up">
+									  <h5><i class="fi-lightbulb"></i> Writeup Details</h5>
+									  <hr/>
+									  <p class="label success">Auto Point: {{ w.point }}</p>
+									  <p class="label success" id="addtchrptsresv{{w.id}}"><i class='fi-check'></i> Teacher Point: {{ w.teacher_point }}</p>
+									  <table class="hover stack">
+										  <tr>
+											  <td>
+												  <label>Known List</label>
+											  </td>
+											  <td>
+												  <label>{{w.known_list}}</label>
+											  </td>
+										  </tr>
+										  <tr>
+											  <td>
+												  <label>Unknown List</label>
+											  </td>
+											  <td>
+												  <label>{{w.unknown_list}}</label>
+											  </td>
+										  </tr>
+										  <tr>
+											  <td>
+												  <label>Todo List</label>
+											  </td>
+											  <td>
+												  <label>{{w.todo_list}}</label>
+											  </td>
+										  </tr>
+										  <tr>
+											  <td>
+												  <label>Problem Statement</label>
+											  </td>
+											  <td>
+												  <label>{{w.problem_statement}}</label>
+											  </td>
+										  </tr>
+										  <tr>
+											  <td>
+												  <label>Conclusion</label>
+											  </td>
+											  <td>
+												  <label>{{w.conclusion}}</label>
+											  </td>
+										  </tr>
+									  </table>
+									  
+									  <div class="button-group">
+										  <form name="addtchrptsv{{w.id}}">
+											  <label>Teacher Points
+											  </label>
+											  
+												<div class="small-8 columns">
+												  <div class="slider" data-slider data-initial-start="{{ w.teacher_point }}" data-step="5">
+												    <span class="slider-handle"  data-slider-handle role="slider" tabindex="1" aria-controls="sliderOutput2{{w.id}}"></span>
+												    <span class="slider-fill" data-slider-fill></span>
+												  </div>
+												</div>
+												<div class="small-2 columns">
+												  <input name="teacher_point" type="number" id="sliderOutput2{{w.id}}" value="{{ w.teacher_point }}" />
+												</div>
+												<div class="small-2 columns">
+												  <a class="button" onclick="addtchrpts('{{w.id}}')">Submit</a>
+												</div>
+		
+										  </form>
+									  </div>
+									  
+									  <button class="close-button" data-close aria-label="Close reveal" type="button">
+									    <span aria-hidden="true">&times;</span>
+									  </button>
+									</div>
+		
+								</div>
+							</div>
+						{% endif %}
+						{% endfor %}
+						</ul>
+						</div>
+						{% if writeup.has_next %}
+						<div class="pagination">
+						    <span class="step-links">
+						        <ul class="pagination text-center" role="navigation" aria-label="Pagination">
+								  {% if writeup.has_previous %}
+								  <li class="pagination-previous disabled"><a href="?page={{ writeup.previous_page_number }}">Previous</a></li>
+								  {% endif %}
+						          <li class="current">Page {{ writeup.number }} of {{ writeup.paginator.num_pages }}</li>
+								  
+								  {% for page_iter in writeup.paginator.page_range%}<li><a href="?page={{page_iter}}" aria-label="Page {{page_iter}}">{{page_iter}}</a></li>{%endfor%}
+								  {% if writeup.has_next %}
+						          <li class="pagination-next"><a href="?page={{ writeup.next_page_number }}" aria-label="Next page">Next</a></li>
+								  {% endif %}
+								</ul>
+						    </span>
+						</div>
+						{% endif %}
+				  </div>
+				  <div class="tabs-panel" id="panel2">
+				    <div class="row">
+						<ul class="menu vertical">
+						{% for w in writeup %}	
+						{% if w.teacher_point != 0 %}
+							<div id="writeupv{{w.id}}" data-toggler data-animate="hinge-in-from-top hinge-out-from-top" class="column">
+								<div class="callout">
+									<li><a data-toggle="animatedModal{{w.id}}"><i class="fi-lightbulb"></i> {{ w.team.name }} -- {{ w.problem.title }}</a></li>
+												
+									<div class="large reveal" id="animatedModal{{w.id}}" data-reveal data-close-on-click="true" data-animation-in="scale-in-down" data-animation-out="scale-out-up">
+									  <h5><i class="fi-lightbulb"></i> Writeup Details</h5>
+									  <hr/>
+									  <p class="label success">Auto Point: {{ w.point }}</p>
+									  <p class="label success" id="addtchrptsresv{{w.id}}"><i class='fi-check'></i> Teacher Point: {{ w.teacher_point }}</p>
+									  <table class="hover stack">
+										  <tr>
+											  <td>
+												  <label>Known List</label>
+											  </td>
+											  <td>
+												  <label>{{w.known_list}}</label>
+											  </td>
+										  </tr>
+										  <tr>
+											  <td>
+												  <label>Unknown List</label>
+											  </td>
+											  <td>
+												  <label>{{w.unknown_list}}</label>
+											  </td>
+										  </tr>
+										  <tr>
+											  <td>
+												  <label>Todo List</label>
+											  </td>
+											  <td>
+												  <label>{{w.todo_list}}</label>
+											  </td>
+										  </tr>
+										  <tr>
+											  <td>
+												  <label>Problem Statement</label>
+											  </td>
+											  <td>
+												  <label>{{w.problem_statement}}</label>
+											  </td>
+										  </tr>
+										  <tr>
+											  <td>
+												  <label>Conclusion</label>
+											  </td>
+											  <td>
+												  <label>{{w.conclusion}}</label>
+											  </td>
+										  </tr>
+									  </table>
+									  
+									  <div class="button-group">
+										  <form name="addtchrptsv{{w.id}}">
+											  <label>Teacher Points
+											  </label>
+											  
+												<div class="small-8 columns">
+												  <div class="slider" data-slider data-initial-start="{{ w.teacher_point }}" data-step="5">
+												    <span class="slider-handle"  data-slider-handle role="slider" tabindex="1" aria-controls="sliderOutput2{{w.id}}"></span>
+												    <span class="slider-fill" data-slider-fill></span>
+												  </div>
+												</div>
+												<div class="small-2 columns">
+												  <input name="teacher_point" type="number" id="sliderOutput2{{w.id}}" value="{{ w.teacher_point }}"/>
+												</div>
+												<div class="small-2 columns">
+												  <a class="button" onclick="addtchrpts('{{w.id}}')">Submit</a>
+												</div>
+		
+										  </form>
+									  </div>
+									  
+									  <button class="close-button" data-close aria-label="Close reveal" type="button">
+									    <span aria-hidden="true">&times;</span>
+									  </button>
+									</div>
+		
+								</div>
+							</div>	
+						{% endif %}		
+						{% endfor %}
+						</ul>
+						</div>
+							
+						{% if writeup.has_next %}
+						<p>&nbsp;</p>
+						<div class="pagination">
+						    <span class="step-links">
+						        <ul class="pagination text-center" role="navigation" aria-label="Pagination">
+								  {% if writeup.has_previous %}
+								  <li class="pagination-previous disabled"><a href="?page={{ writeup.previous_page_number }}">Previous</a></li>
+								  {% endif %}
+						          <li class="current">Page {{ writeup.number }} of {{ writeup.paginator.num_pages }}</li>
+								  
+								  {% for page_iter in writeup.paginator.page_range%}<li><a href="?page={{page_iter}}" aria-label="Page {{page_iter}}">{{page_iter}}</a></li>{%endfor%}
+								  {% if writeup.has_next %}
+						          <li class="pagination-next"><a href="?page={{ writeup.next_page_number }}" aria-label="Next page">Next</a></li>
+								  {% endif %}
+								</ul>
+						    </span>
+						</div>
+						{% endif %}
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>	
+		
+	<script>
+		function addtchrpts(id)
+		{
+			var o = document.forms['addtchrptsv' + id];
+			var oo = o.getElementsByTagName("input");
+			var get_parameter = "?id=";
+			get_parameter += id;
+			get_parameter += "&";
+			get_parameter += "teacher_point=";
+			get_parameter += oo[0].value;
+			
+			// AJAX
+			if (window.XMLHttpRequest)
+			{
+				xhttp = new XMLHttpRequest();
+			} 
+			else
+			{
+				xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			xhttp.onreadystatechange = function() 
+			{
+				if (xhttp.readyState == 4 && xhttp.status == 200) 
+				{
+					document.getElementById("addtchrptsresv" + id).innerHTML = "<i class='fi-check'></i> Teacher Point: " + xhttp.responseText;
+						location.reload(); 
+				}
+			}
+			
+			
+			var url = window.location.href;
+			var arr = url.split("/");
+			var domain = arr[0] + "//" + arr[2];
+			var URL = domain + "/teacher/writeup/update" + get_parameter;
+			xhttp.open("GET", URL, true);
+			xhttp.send();
+		}
+	</script>
+	{% include "teacher/templates/footer.html" %}

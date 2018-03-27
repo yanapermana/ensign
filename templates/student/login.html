@@ -1,0 +1,71 @@
+	{% include "student/templates/header.html" %}
+
+	<div class="top-bar">
+		<div class="row">
+			<div class="large-7 large-centered columns">
+
+				<div class="title-bar" data-responsive-toggle="example-menu" data-hide-for="medium">
+				  <button class="menu-icon" type="button" data-toggle></button>
+				  <div class="title-bar-title">Menu</div>
+				</div>
+
+				<div class="top-bar" id="example-menu">
+				  <div class="top-bar-left">
+				    <ul class="dropdown menu" data-dropdown-menu>
+				      <li class="menu-text">ENSIGN</li>
+				      <li><a href="/student/about">About</a></li>
+				    </ul>
+				  </div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="row" style="margin-top:64px">
+		<div class="columns">
+			<div class="large-7 large-centered columns align-self-middle">
+				{% block login %}
+				<div class="callout">
+				<form action="/student/login" method="post" data-abide>
+					<div class="row">
+	
+						<div class="medium-5 columns">
+							<label>
+								<h4>Log in to Ensign</h4>
+							</label>
+							
+							<label>
+								{% csrf_token %}
+							</label>
+							
+							<label>
+								<input type="text" name="username" placeholder="Username" required autofocus>
+							</label>
+							
+							<label>
+								<input type="password" name="password" placeholder="Password" required autofocus>
+							</label>
+							
+							<label>
+								<input class="button" type="submit" value="Log In">
+							</label>
+						</div>
+					</div>
+				</form>
+				</div>
+				<div class="callout secondary" style="margin-top: -24px;">
+				<form action="/student/login" method="post" data-abide>
+					<div class="row">
+						<div class="medium-12 columns">
+							<label>
+								New to Ensign? <a href="/student/signup/form/new">Sign up now »</a>
+							</label>
+						</div>
+					</div>
+				</div>
+				{% endblock %}
+			</div>
+		</div>
+	</div>
+	{% include "student/templates/footer.html" %}

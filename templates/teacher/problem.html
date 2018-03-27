@@ -1,0 +1,185 @@
+	{% include "teacher/templates/header.html" %}
+	{% include "teacher/templates/menu.html" %}
+
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">	
+				
+				<div class="callout">
+					<label><strong>Problems</strong></label>
+					<small>Create problem based learning for your student.</small>
+				</div>
+				
+				<div class="button-group">
+				  <a class="button" id="show-problem" data-toggle="{% for item in query %}problemv{{item.id}} {% endfor %}">Show Problem</a>
+				  <a class="button" data-open="modal-create-problem">Create Problem</a>
+				</div>
+				
+				<br/>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: {{message}},
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+
+				<div class="reveal" id="modal-create-problem" data-reveal data-animation-in="spin-in" data-animation-out="spin-out">
+					<form action="/teacher/problem/create" method="post" enctype="multipart/form-data" data-abide>
+						<div class="row">
+					
+							<div class="medium-11 columns">
+								<label>
+									<h5><i class="fi-page-add"></i> Create Problem</h5> <hr/>
+								</label>
+								
+								<label>
+									{% csrf_token %}
+								</label>
+								
+								<label>Title
+									<input type="text" name="title" placeholder="Title" required autofocus>
+								</label>
+								
+								<label>Description
+									<input type="text" name="description" placeholder="Description" required autofocus>
+								</label>
+
+								<label>Limited Questions
+										<textarea type="text" name="limited_questions" placeholder="Limited Questions" required autofocus /></textarea>
+								</label>
+								
+								<label>Keyword
+									<input type="text" name="keyword" placeholder="Keyword" required autofocus>
+								</label>
+								
+								<label>Flag
+									<input type="text" name="flag" placeholder="Flag" required autofocus>
+								</label>
+								
+								<label>Point
+									<input type="number" name="point" placeholder="Point" required autofocus>
+								</label>
+								
+								<label for="attachment" class="button secondary"><i class="fi-page-filled"></i> Upload Attachment</label>
+								<input type="file" name="attachment" id="attachment" class="show-for-sr" required autofocus/> <br/>
+								
+								<label for="picture" class="button secondary"><i class="fi-photo"></i> Upload Picture</label>
+								<input type="file" name="picture" id="picture" class="show-for-sr" required autofocus/> <br/>
+								
+								<label>
+									<input class="button expanded" type="submit" value="Create">
+								</label>
+							</div>
+						</div>
+					</form>
+				  <button class="close-button" data-close aria-label="Close modal" type="button">
+				    <span aria-hidden="true">&times;</span>
+				  </button>
+				</div>
+
+				<div class="row small-up-1 medium-up-2 large-up-3">
+				{% for item in query %}	
+					<div id="problemv{{item.id}}" data-toggler data-animate="hinge-in-from-top hinge-out-from-top" class="column">
+						<div class="callout text-center" >
+							<a data-toggle="animatedModal{{item.id}}"><img src="/{{item.picture}}" class="thumbnail" alt="" /></a>
+							
+							<!-- <img src="/{{item.picture}}" class="thumbnail" alt=""/> -->
+							
+							<a class="expanded button hollow" data-toggle="animatedModal{{item.id}}">{{item.title}}</a>							
+							<div class="large reveal" id="animatedModal{{item.id}}" data-reveal data-close-on-click="true" data-animation-in="scale-in-down" data-animation-out="scale-out-up">
+							  <h5><i class="fi-puzzle"></i> Problem Details</h5>
+							  <hr/>
+							  <table>
+								  <tr>
+									  <td>
+										  <label>Title</label>
+									  </td>
+									  <td>
+										  <label>{{item.title}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>Description</label>
+									  </td>
+									  <td>
+										  <label>{{item.description}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>Limited Questions</label>
+									  </td>
+									  <td>
+										  <!-- <label>{{item.limited_questions}}</label> -->
+										{% for limited_questions_item in item.limited_questions_split_by_newline %}
+											{{ limited_questions_item }}<br/>
+										{% endfor %}
+									  </td>
+									
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>Keyword</label>
+									  </td>
+									  <td>
+										  <label>{{item.keyword}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>Flag</label>
+									  </td>
+									  <td>
+										  <label>{{item.flag}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>Point</label>
+									  </td>
+									  <td>
+										  <label>{{item.point}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>Attachment</label>
+									  </td>
+									  <td>
+										  <label><a class="label secondary" href="/{{item.attachment}}"><i class="fi-page"></i> {{item.attachment}}</a></label>
+									  </td>
+								  </tr>
+							  </table>
+							  <div class="button-group">
+								<a class="success button" href="/teacher/problem/update/{{item.id}}"><i class="fi-page-edit"></i> Update</a>
+								<a class="alert button" href="/teacher/problem/delete/process/{{item.id}}"><i class="fi-trash"></i> Delete</a>
+								<a class="button" href="/teacher/problem/support/{{item.id}}"><i class="fi-lightbulb"></i> Add Support</a>
+								<a class="warning button" href="/teacher/problem/evaluation/{{item.id}}"><i class="fi-book"></i> Add Evaluaton</a>
+							  </div>
+							  <button class="close-button" data-close aria-label="Close reveal" type="button">
+							    <span aria-hidden="true">&times;</span>
+							  </button>
+							</div>
+
+						</div>
+					</div>			
+				{% endfor %}
+				</div>
+
+			</div>
+		</div>
+	</div>	
+	{% include "teacher/templates/footer.html" %}

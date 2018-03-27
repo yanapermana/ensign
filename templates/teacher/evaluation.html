@@ -1,0 +1,222 @@
+	{% include "teacher/templates/header.html" %}
+	{% include "teacher/templates/menu.html" %}
+
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">	
+				
+				<div class="callout">
+					<label><strong>Evaluation</strong></label>
+					<small>Create questions for your student evaluation.</small>
+				</div>
+				
+				<div class="button-group">
+				  <a class="button" id="show-evaluation" data-toggle="{% for item in query %}problemv{{item.id}} {% endfor %}">Evaluation</a>
+				  <a class="button" data-open="modal-create-evaluation">Create Evaluation</a>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: {{message}},
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+
+				<div class="full reveal" id="modal-create-evaluation" data-reveal data-animation-in="slide-in-up" data-animation-out="hinge-out-from-bottom">
+					<form action="/teacher/problem/evaluation/create" method="post" enctype="multipart/form-data" data-abide>
+						<div class="row">
+					
+							<div class="medium-9 medium-centered columns">
+								<label>
+									<h5><i class="fi-book"></i> Create Evaluation</h5> <hr/>
+								</label>
+								
+								<label>
+									{% csrf_token %}
+								</label>
+								
+								<label>
+									<input class="is-hidden" type="text" name="problem_id" value="{{problem_id}}" hidden="hidden" required autofocus/>
+								</label>
+								
+								<label>Question
+									<textarea type="text" name="question" required autofocus/></textarea><br/>
+								</label>
+								
+								<label for="picture" class="button secondary"><i class="fi-photo"></i> Upload Picture (Optional)</label>
+								<input type="file" name="picture" id="picture" class="show-for-sr" /> <br/>
+								
+								<label>A answer
+									<textarea type="text" name="A" required autofocus/></textarea><br/>
+								</label>
+								
+								<label>B answer
+									<textarea type="text" name="B" required autofocus/></textarea><br/>
+								</label>
+								
+								<label>C answer
+									<textarea type="text" name="C" required autofocus/></textarea><br/>
+								</label>
+								
+								<label>D answer
+									<textarea type="text" name="D" required autofocus/></textarea><br/>
+								</label>
+								
+								<label>E answer
+									<textarea type="text" name="E" required autofocus/></textarea><br/>
+								</label>
+								
+								<label>Correct answer
+									<select name="answer">
+										<option name="answer" value="A">A</option>
+										<option name="answer" value="B">B</option>
+										<option name="answer" value="C">C</option>
+										<option name="answer" value="D">D</option>
+										<option name="answer" value="E">E</option>
+									</select>
+								</label>
+								
+								<label>Point
+									<input type="number" name="point" required autofocus/>
+								</label>
+								
+								<label>Difficult level
+									<select name="difficult_level">
+										<option name="difficult_level" value="C1">C1</option>
+										<option name="difficult_level" value="C2">C2</option>
+										<option name="difficult_level" value="C3">C3</option>
+										<option name="difficult_level" value="C4">C4</option>
+										<option name="difficult_level" value="C5">C5</option>
+										<option name="difficult_level" value="C6">C6</option>
+									</select>
+								</label>
+								
+								<label>Difficult forecast
+									<select name="difficult_forecast">
+										<option name="difficult_forecast" value="Easy">Easy</option>
+										<option name="difficult_forecast" value="Medium">Medium</option>
+										<option name="difficult_forecast" value="Hard">Hard</option>
+									</select>	
+								</label>
+
+								<label>
+									<input class="button expanded" type="submit" value="Create">
+								</label>
+							</div>
+						</div>
+					</form>
+				  <button class="close-button" data-close aria-label="Close modal" type="button"><span aria-hidden="true">&times;</span></button>
+				</div>
+
+				<div class="row">
+				{% for item in query %}	
+					<div id="problemv{{item.id}}" data-toggler data-animate="hinge-in-from-top hinge-out-from-top" class="column">
+						<div class="callout">
+							<a data-toggle="animatedModal{{item.id}}"><i class="fi-book"></i> {{item.question}}</a>					
+							<div class="reveal large" id="animatedModal{{item.id}}" data-reveal data-close-on-click="true" data-animation-in="scale-in-down" data-animation-out="scale-out-up">
+							  <h5><i class="fi-book"></i> Evaluation Details</h5>
+							  <hr/>
+							  <table class="hover stack">
+								  {% if item.picture != "static/media/problem/evaluation/picture/default.jpg" %}
+								  <tr>
+									  <td>
+										  <label>Picture</label>
+									  </td>
+									  <td>
+										  <img src="/{{item.picture}}" class="thumbnail" alt="evaluation" height="512" width="512"/>
+									  </td>
+								  </tr>
+								  {% endif %}
+								  <tr>
+									  <td>
+										  <label>Question</label>
+									  </td>
+									  <td>
+										  <label>{{item.question}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>A</label>
+									  </td>
+									  <td>
+										  <label>{{item.A}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>B</label>
+									  </td>
+									  <td>
+										  <label>{{item.B}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>C</label>
+									  </td>
+									  <td>
+										  <label>{{item.C}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>D</label>
+									  </td>
+									  <td>
+										  <label>{{item.D}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>E</label>
+									  </td>
+									  <td>
+										  <label>{{item.E}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										 <label>Answer</label>
+									  </td>
+									  <td>
+										  <label>{{item.answer}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td>
+										  <label>Point</label>
+									  </td>
+									  <td>
+										  <label>{{item.point}}</label>
+									  </td>
+								  </tr>
+							  </table>
+							  <div class="button-group">
+								<a class="success button" href="/teacher/problem/evaluation/update/{{problem_id}}/{{item.id}}"><i class="fi-page-edit"></i> Update</a>
+								<a class="alert button" href="/teacher/problem/evaluation/delete/process/{{problem_id}}/{{item.id}}"><i class="fi-trash"></i> Delete</a>
+							  </div>
+							  <button class="close-button" data-close aria-label="Close reveal" type="button">
+							    <span aria-hidden="true">&times;</span>
+							  </button>
+							</div>
+
+						</div>
+					</div>			
+				{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>	
+	{% include "teacher/templates/footer.html" %}

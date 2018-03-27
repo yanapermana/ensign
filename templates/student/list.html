@@ -1,0 +1,19 @@
+{% include "student/templates/header.html" %}
+{% include "student/templates/menu.html" %}
+
+	<table border="1">
+		<tr>
+			<td>Username</td>
+			<td>Password</td>
+		</tr>
+		
+		{% for item in query %}	
+		<tr>
+			<td>{{item.username}}</td>
+			<td>{{item.password}}</td>
+		</tr>
+		{% endfor %}
+	
+	</table>
+
+{% include "student/templates/footer.html" %}

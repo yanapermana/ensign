@@ -1,0 +1,91 @@
+{% include "student/templates/header.html" %}
+{% include "student/templates/menu.html" %}
+
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">
+				
+				<div class="callout">
+					<label><strong>Statistic</strong></label>
+					<small>View my milestone.</small>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: {{message}},
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+				
+				<div class="large-centered columns callout">
+					<div class="callout">
+						<label>How many times our team answered incorrectly?</label>
+					</div>
+					  
+					  <canvas id="myChart" width="768px" height="384px" ></canvas>
+				</div>
+				<div class="large-centered columns callout">
+					<div class="callout">
+						<label>How many times our team solved problems?</label>
+					</div>
+					  <canvas id="myCanvas" width="768px" height="384px" ></canvas>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+            window.onload = function() { 
+                init();
+            };
+
+            function init() {
+                var ctx = $("#myChart").get(0).getContext("2d");
+                var data = {
+                    labels: [{% for s in solve %} "{{s.problem.title}}", {% endfor %}],
+                    datasets: [
+                        {
+                            fillColor: "rgba(220,220,220,0.5)",
+                            strokeColor: "rgba(220,220,220,1)",
+                            pointColor: "rgba(220,220,220,1)",
+                            pointStrokeColor: "#fff",
+                            data: [{% for s in solve %} {{s.tries}}, {% endfor %}]
+                        },
+                        // put new data here!
+                    ]
+                }
+                var myNewChart = new Chart(ctx).Line(data);
+                
+                var ctx2 = $("#myCanvas").get(0).getContext("2d");
+                var data = {
+                    labels: ["Solved", "Unsolved"],
+                    datasets: [
+                        {
+                            fillColor: "rgba(220,220,220,0.5)",
+                            strokeColor: "rgba(220,220,220,1)",
+                            pointColor: "rgba(220,220,220,1)",
+                            pointStrokeColor: "#fff",
+                            data: [{{solved}},{{unsolved}}]
+                        },
+                        // put new data here!
+                    ]
+                }
+                var myNewChart = new Chart(ctx2).Line(data);
+            }
+
+        </script>
+
+{% include "student/templates/footer.html" %}

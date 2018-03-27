@@ -1,0 +1,67 @@
+	{% include "teacher/templates/header.html" %}
+	{% include "teacher/templates/menu.html" %}
+
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">	
+				
+				<div class="callout">
+					<label><strong>Support</strong></label>
+					<small>Create support for your student insight.</small>
+				</div>
+				
+				{% if message %}
+				<div hidden="hidden">
+					<div class="eval-js" id="message">{{message}}</div>
+					<pre>
+						<code>$.toast({
+										    heading: '{{heading}}',
+										    icon: '{{icon}}',
+										    showHideTransition: 'slide',
+										    text: '{{message}}',
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				{% endif %}
+
+				<div class="callout large">
+					<form action="/teacher/problem/support/update/process/{{item.id}}" method="post" data-abide>
+						<div class="row">
+					
+							<div class="medium-11 medium-centered columns">
+								<label>
+									<h5 class="text-center">Update Support</h5> <hr/>
+								</label>
+									
+								<label>
+									{% csrf_token %}
+								</label>
+								
+								<label>
+									<input class="is-hidden" type="text" name="problem_id" value="{{problem_id}}" hidden="hidden" required autofocus/>
+								</label>
+								
+								<label>Title
+									<input type="text" name="title" value="{{item.title}}" placeholder="Title" required autofocus>
+								</label>
+								
+								<label>
+									<textarea id="blogeditor" name="post" style="height:300px;width:850px;" required autofocus >{{item.post}}</textarea>
+								</label>
+								
+								<br/>
+								<label>
+									<input class="button" type="submit" value="Update">
+								</label>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>	
+	{% include "teacher/templates/footer.html" %}

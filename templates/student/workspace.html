@@ -1,0 +1,478 @@
+	{% include "student/templates/header.html" %}
+	{% include "student/templates/menu.html" %}
+	<div class="row">
+		<div class="columns">
+			<div class="large-9 large-centered columns align-self-middle">
+				
+				<div hidden="hidden">
+					<div class="eval-js" id="workspace-notification"></div>
+					<pre>
+						<code>$.toast({
+										    heading: 'Workspace Update',
+										    icon: 'success',
+										    showHideTransition: 'slide',
+										    text: 'Your write up has been updated.',
+										    position: 'bottom-right',
+										    stack: false,
+										    loaderBg: '#4fc1e6',
+										    hideAfter: 3000})
+						</code>
+					</pre>
+				</div>
+				
+				<div class="callout">
+					<label><strong>Problem Workspace</strong></label>
+					<small>Try harder and smarter.</small>
+				</div>
+				
+				<div class="row collapse">
+				  <div class="medium-3 columns">
+				    <ul class="tabs vertical" id="example-vert-tabs" data-tabs>
+				      <li class="tabs-title is-active"><a href="#panel1v" aria-selected="true">Problem Details</a></li>
+				      <li class="tabs-title"><a href="#panel2v">Write Up</a></li>
+				      <li class="tabs-title"><a href="#panel3v">Submit Answer</a></li>
+				      <li class="tabs-title"><a href="#panel4v">Support</a></li>
+				      <li class="tabs-title"><a href="#panel5v">Evaluation</a></li>
+				    </ul>
+				    </div>
+				    <div class="medium-9 columns">
+				    <div class="tabs-content vertical" data-tabs-content="example-vert-tabs">
+				      <div class="tabs-panel is-active" id="panel1v">
+						<h5><i class="fi-puzzle"></i> Problem Details</h5> <hr/>
+						<table class="hover">
+								  <tr>
+									  <td colspan="2">
+										  <h4>{{problem.title}} <sup class="label secondary">{{problem.point}} Pts</sup></h4>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td colspan="2">
+										  <label>{{problem.description}}</label>
+									  </td>
+								  </tr>
+								  <tr>
+									  <td colspan="2">
+										  <label><a class="small secondary button" href="/{{problem.attachment}}"><i class="fi-page"></i> Download Attachment</a></label>
+									  </td>
+								  </tr>
+							  </table>
+				      </div>
+				      <div class="tabs-panel" id="panel2v">
+						<form name="update" method="post" data-abide>
+						<label>
+							<h5><i class="fi-page"></i> Write Up</h5> <hr/>
+						</label>
+
+						<label>
+							<input type="hidden" name="problem_id" value="{{problem.id}}"/>
+						</label>
+
+						<div class="callout secondary">
+							<label><span data-tooltip aria-haspopup="true" class="has-tip" data-disable-hover="false" tabindex="1" title="Limited Question (Pertanyaan Terbatas) digunakan untuk membatasi eksplorasi masalah. Tuliskan jawaban Anda yang berkaitan dengan pertanyaan terbatas pada form dibawah ini."><i class="fi-info"></i></span><strong>&nbsp;Limited Questions</strong></label>
+							{% for limited_questions_item in problem.limited_questions_split_by_newline %}
+								<small>{{ limited_questions_item }}</small><br/>
+							{% endfor %}
+							<!-- <p>{{problem.limited_questions}}</p> -->
+						</div>
+
+						<label><span data-tooltip aria-haspopup="true" class="has-tip" data-disable-hover="false" tabindex="1" title="Tuliskan hal apa saja yang perlu diketahui tentang masalah ini"><i class="fi-info"></i></span> Known List
+								<textarea type="text" id="known_list" name="known_list" onchange="update_writeup('Known list')" required autofocus/>{{writeup.known_list}}</textarea>
+						</label>
+						
+						<label><span data-tooltip aria-haspopup="true" class="has-tip" data-disable-hover="false" tabindex="1" title="Tuliskan hal apa saja yang perlu dicari dalam masalah ini"><i class="fi-info"></i></span> Unknown List 
+								<textarea type="text" id="unknown_list" name="unknown_list" onchange="update_writeup('Unknown list')" required autofocus/>{{writeup.unknown_list}}</textarea>
+						</label>
+						
+						<label><span data-tooltip aria-haspopup="true" class="has-tip" data-disable-hover="false" tabindex="1" title="Tuliskan hal apa saja perlu Anda lakukan agar masalah dapat diselesaikan."><i class="fi-info"></i></span> Todo List
+								<textarea type="text" id="todo_list" name="todo_list" onchange="update_writeup('Todo list')" required autofocus/>{{writeup.todo_list}}</textarea>
+						</label>
+						
+						<label><span data-tooltip aria-haspopup="true" class="has-tip" data-disable-hover="false" tabindex="1" title="Tuliskan tahapan dan proses penyelesaian masalah yang telah Anda lakukan."><i class="fi-info"></i></span> Problem Statement
+								<textarea type="text" id="problem_statement" name="problem_statement" onchange="update_writeup('Problem Statement')" required autofocus/>{{writeup.problem_statement}}</textarea>
+						</label>
+						
+						<label><span data-tooltip aria-haspopup="true" class="has-tip" data-disable-hover="false" tabindex="1" title="Tuliskan kesimpulan berdasarkan masalah yang telah Anda selesaikan."><i class="fi-info"></i></span> Conclusion
+								<textarea type="text" id="conclusion" name="conclusion" onchange="update_writeup('Conclusion')" required autofocus/>{{writeup.conclusion}}</textarea>
+						</label>
+					</form>
+				      </div>
+				      <div class="tabs-panel" id="panel3v">
+						<label>
+							<h5><i class="fi-pencil"></i> Submit Answer</h5> <hr/>
+						</label>
+						<div id="workspace-answer">
+							<label>Answer
+								<input type="text" name="answer" value="{{writeup.answer}}" required autofocus/>
+								<input class="button" type="Submit" value="Verify">
+							</label>
+						</div>
+						<div id="workspace-answer-response">
+						</div>
+				      </div>
+				      
+				      <div class="tabs-panel" id="panel4v">
+						<h5><i class="fi-lightbulb"></i> Support</h5> <hr/>
+						
+						{% if support %}
+							<ul class="accordion" data-accordion data-allow-all-closed="true">
+							{% for sprt in support %}
+							  <li class="accordion-item" data-accordion-item>
+							    <a href="#" class="accordion-title">{{ sprt.title }}</a>
+							    <div class="accordion-content medium-centered" data-tab-content>
+									{% autoescape off %}{{ sprt.post }}{% endautoescape %}
+							    </div>
+							  </li>
+							{% endfor %}
+							</ul>
+						{% else %}
+						<span class="alert label"><i class="fi-x"></i> Oops, your teacher forget to make support on this problem.</span>
+						{% endif %}
+				      </div>
+				      
+				      <div class="tabs-panel" id="panel5v">
+						<h5><i class="fi-book"></i> Evaluation</h5> <hr/>
+						{% if evaluation %}
+						{% for e in evaluation %}
+						
+						{% if e.status == True %}
+						
+						<table id="tablev{{e.id}}" class="hover">
+							<tr>
+								<td>
+									{{forloop.counter}}
+								</td>
+								<td>
+									{{ e.question }}
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="answers" value="A" checked>
+								</td>
+								<td>
+									<label>{{e.A}}</label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="answers" value="B">
+								</td>
+								<td>
+									<label>{{e.B}}</label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="answers" value="C">
+								</td>
+								<td>
+									<label>{{e.C}}</label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="answers" value="D">
+								</td>
+								<td>
+									<label>{{e.D}}</label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="answers" value="E">
+								</td>
+								<td>
+									<label>{{e.E}}</label>
+								</td>
+							</tr>
+						</table>
+						
+						<!-- <p>{{ e.point }}</p> -->
+						
+						<div class="button-group">
+						  <a class="button" onclick="evalshowans('tablev{{e.id}}', '{{e.answer}}')">Show Answer</a>
+						</div>
+						
+						<span class='success label'><i class='fi-check'></i> Your team already solved this.</span>
+						
+						<hr/>
+						
+						{% else %}
+						
+						<table id="tablev{{e.id}}" class="hover">
+							{% if e.picture != "static/media/problem/evaluation/picture/default.jpg" %}
+							<tr>
+								<td>
+									&nbsp;
+								</td>
+								<td>
+									<img src="/{{e.picture}}" class="thumbnail" alt="evaluation" height="512" width="512"/>
+								</td>
+							</tr>
+							{% endif %}
+							<tr>
+								<td>
+									<label>{{ forloop.counter }}</label>
+								</td>
+								<td>
+									<label>{{ e.question }}</label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="answers" value="A" checked>
+								</td>
+								<td>
+									<label>{{e.A}}</label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="answers" value="B">
+								</td>
+								<td>
+									<label>{{e.B}}</label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="answers" value="C">
+								</td>
+								<td>
+									<label>{{e.C}}</label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="answers" value="D">
+								</td>
+								<td>
+									<label>{{e.D}}</label>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="radio" name="answers" value="E">
+								</td>
+								<td>
+									<label>{{e.E}}</label>
+								</td>
+							</tr>
+						</table>
+						
+						<!-- <p>{{ e.point }}</p> -->
+						
+						<div class="button-group">
+						  <a class="button" onclick="evalchkans('tablev{{e.id}}', {{e.id}}, 'workevalansresp{{e.id}}')">Check</a>
+						</div>
+						
+						<div id="workevalansresp{{e.id}}"></div>
+						<hr/>
+						{% endif %}
+						{% endfor %}
+						
+						{% else %}
+						<span class="alert label"><i class="fi-x"></i> Oops, your teacher forget to make evaluation on this problem.</span>
+						{% endif %}
+				      </div>
+				      
+				    </div>
+				  </div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	<script>
+		spesific = new Array();
+		spesific[0] = "known_list";
+		spesific[1] = "unknown_list";
+		spesific[2] = "todo_list";
+		spesific[3] = "problem_statement";
+		spesific[4] = "conclusion";
+		var x = document.forms["update"];
+		var y = x.getElementsByTagName("textarea");
+		var z;
+		for (i=0; i<y.length; i++)
+		{
+			for (j=0; j<spesific.length; j++)
+			{
+				if (y[i].name == spesific[j])
+				{
+					z = y[i];
+					z.addEventListener("change", update_writeup);
+				}
+			}
+		}
+		
+		function update_writeup(element)
+		{
+			var x = document.forms["update"];
+			var y = x.getElementsByTagName("textarea");
+			var get_parameter = "?";
+			for (i=0; i<y.length; i++)
+			{
+				get_parameter += y[i].name;
+				get_parameter += "=";
+				get_parameter += y[i].value;
+				get_parameter += "&";
+			}
+			
+			// AJAX
+			if (window.XMLHttpRequest)
+			{
+				xmlhttp = new XMLHttpRequest();
+			} 
+			else
+			{
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			
+			
+			var URL = document.location.origin + "/student/problem/workspace/update/{{problem.id}}/" + get_parameter;
+			
+			xmlhttp.open("GET", URL, true);
+			xmlhttp.send();
+			
+			function create_new_p(div_id, text_node)
+			{
+				var tag = document.createElement("p");
+				var node = document.createTextNode(text_node);
+				var element = document.getElementById(div_id)
+				tag.appendChild(node);
+				element.appendChild(tag);
+			}
+			
+			create_new_p("workspace-notification", element);
+			
+			// touch
+			var xy = document.getElementById("workspace-notification");
+			if (xy.innerHTML.length != 0)
+			{
+				$(document).ready(
+					function()
+					{
+						$('#workspace-notification').trigger('click'); 
+					});
+			}
+		}
+		
+		var x = document.getElementById("workspace-answer");
+		var y = x.getElementsByTagName("input");
+		y[1].addEventListener("click", check_answer);
+		
+		function check_answer()
+		{
+			var x = document.getElementById("workspace-answer");
+			var y = x.getElementsByTagName("input");
+			
+			// AJAX
+			var get_parameter = "?";
+			get_parameter += "problem_id";
+			get_parameter += "=";
+			get_parameter += "{{problem.id}}";
+			get_parameter += "&";
+			get_parameter += "answer";
+			get_parameter += "=";
+			get_parameter += y[0].value;
+			get_parameter += "&";
+			
+			if (window.XMLHttpRequest)
+			{
+				xhttp = new XMLHttpRequest();
+			} 
+			else
+			{
+				xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() 
+				{
+					if (xhttp.readyState == 4 && xhttp.status == 200) 
+					{
+						if (xhttp.responseText == "False")
+						{
+							document.getElementById("workspace-answer-response").innerHTML = "<span class='alert label'><i class='fi-x'></i> " + xhttp.responseText + '</span>';
+						}
+						else if (xhttp.responseText == "True")
+						{
+							document.getElementById("workspace-answer-response").innerHTML = "<span class='success label'><i class='fi-check'></i> " + xhttp.responseText + "</span>";
+						}
+						else
+						{
+							document.getElementById("workspace-answer-response").innerHTML = "<span class='secondary label'><i class='fi-info'></i> " + xhttp.responseText + "</span>";
+						}
+					}
+				}
+			var URL = document.location.origin + "/student/problem/workspace/check/answer" + get_parameter;
+			xhttp.open("GET", URL, true);
+			xhttp.send();
+		}
+		
+		function evalchkans(tablev, eval_id, respv)
+		{
+			var table = document.getElementById(tablev);
+			var radio = table.getElementsByTagName("input");
+			var i;
+			var answer;
+			for(i=0;i<radio.length;i++)
+			{
+				if(radio[i].checked)
+				{
+					answer = radio[i].value;
+				}
+			}
+			
+			var get_parameter = "?";
+			get_parameter += "eval_id";
+			get_parameter += "=";
+			get_parameter += eval_id;
+			get_parameter += "&";
+			get_parameter += "answer";
+			get_parameter += "=";
+			get_parameter += answer;
+			get_parameter += "&";
+			
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() 
+				{
+					if (xhttp.readyState == 4 && xhttp.status == 200) 
+					{
+							if (xhttp.responseText == "False")
+						{
+							document.getElementById(respv).innerHTML = "<span class='alert label'><i class='fi-x'></i> " + xhttp.responseText + '</span>';
+						}
+						else if (xhttp.responseText == "True")
+						{
+							document.getElementById(respv).innerHTML = "<span class='success label'><i class='fi-check'></i> " + xhttp.responseText + "</span>";
+						}
+						else
+						{
+							document.getElementById(respv).innerHTML = "<span class='secondary label'><i class='fi-info'></i> " + xhttp.responseText + "</span>";
+						}
+						
+						<!-- document.getElementById("workevalansresp").innerHTML = "<span class='success label'><i class='fi-check'></i> " + xhttp.responseText + "</span>"; -->
+					}
+				}
+			var URL = document.location.origin + "/student/problem/workspace/evaluation/check/answer" + get_parameter;
+			xhttp.open("GET", URL, true);
+			xhttp.send();
+		}
+		
+		function evalshowans(tablev, ans)
+		{
+			var table = document.getElementById(tablev);
+			var radio = table.getElementsByTagName("input");
+			for(i=0;i<radio.length;i++)
+			{
+				if(radio[i].value == ans)
+				{
+					radio[i].checked = true;
+				}
+			}
+		}
+	</script>
+{% include "student/templates/footer.html" %}
